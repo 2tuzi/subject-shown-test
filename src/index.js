@@ -1,6 +1,22 @@
-import { TPL_SELECT, TPL_SELECT_OPTION} from './template/question-select';
-
+import { TPL_SELECT, TPL_SELECT_OPTION, TPL_EDIT_SELECT_OPTION} from './template/question-select';
+import { clone } from './utils';
 class SubjectShown {
+    constructor(options, data) {
+        this.options = Object.assign({}, {
+            editable: false,
+            showAnswer: false
+          }, options);
+        this.data = data;
+    }
+
+    showQuestions() {
+        const htmlsArr = this.data.map((subject) => {
+            return this.showQuestion(subject.type, subject);
+        });
+
+        return htmlsArr.join();
+    }
+
     showQuestion(type = '1', data = {}) {
         let html;
 
@@ -20,21 +36,43 @@ class SubjectShown {
 
     showQuestionSelect(data) {
         const optionKeys = ['A', 'B', 'C', 'D', 'E', 'F'];
-        const { topic, options } = data;
+        const { id, topic, options } = data;
         const optionsHtmlArr = options.map((item, index)=> {
-            let html = TPL_SELECT_OPTION.replace('{{key}}', optionKeys[index]);
+            const tpl = this.options.editable ? TPL_SELECT_OPTION : TPL_EDIT_SELECT_OPTION;
+            let html;
 
-            return html.replace('{{option}}', item.describe);
+            html = tpl.replace('{{key}}', optionKeys[index]);
+            html = html.replace('{{option}}', item.describe);
+            if (this.options.editable) {
+                html = html.replace('{{id}}', item.id).replace('{{value}}', item.id);
+            }
+            return html;
         });
         const optionsHtml = optionsHtmlArr.join('');
 
-        return TPL_SELECT.replace('{{topic}}', topic).replace('{{options}}', optionsHtml);
+        return TPL_SELECT.replace('{{id}}', id).replace('{{topic}}', topic).replace('{{options}}', optionsHtml);
     }
 
     showQuestionFillBlank() {
         console.log('showQuestionFillBlank');
     }
 
+    getData() {
+        const subjects = clone(this.data);
+
+        return subjects.map(subject => {
+            if (subject.type === '1') {
+                subject.options = subject.options.map(option => {
+                    option.checked = false;
+                    let ref = document.querySelectorAll(`.subject-wrapper-${subject.id} .option-input-${option.id}`);
+                    if (ref && ref[0].checked) {
+                        option.checked = true;
+                    }
+                });
+            }
+            return subject;
+        });
+    }
 }
 
 export default SubjectShown;
