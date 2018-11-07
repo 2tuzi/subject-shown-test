@@ -1,6 +1,6 @@
 {
   "name": "subject-shown-test",
-  "version": "1.0.4",
+  "version": "1.0.7",
   "description": "Produce universal library with webpack and es6",
   "main": "lib/subject-shown-test.js",
   "scripts": {

@@ -38,7 +38,7 @@ class SubjectShown {
         const optionKeys = ['A', 'B', 'C', 'D', 'E', 'F'];
         const { id, topic, options } = data;
         const optionsHtmlArr = options.map((item, index)=> {
-            const tpl = this.options.editable ? TPL_SELECT_OPTION : TPL_EDIT_SELECT_OPTION;
+            const tpl = this.options.editable ? TPL_EDIT_SELECT_OPTION : TPL_SELECT_OPTION;
             let html;
 
             html = tpl.replace('{{key}}', optionKeys[index]);
@@ -68,6 +68,7 @@ class SubjectShown {
                     if (ref && ref[0].checked) {
                         option.checked = true;
                     }
+                    return option;
                 });
             }
             return subject;
